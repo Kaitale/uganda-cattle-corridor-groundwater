@@ -1,0 +1,29 @@
+station,wmz,purpose,start,end,rain,EVP,RMSE_m,t50_days,t95_days,obs_trend_m_per_yr,trend_p_value,model_trend_m_per_yr,longest_drought_months,months,drought_months_SGI_below_m1,severe_months_SGI_below_m1_5,last_month,last_SGI,status
+Rwonyo,VWMZ,Climate Variation Impacts ,2000-09-05,2025-12-16,ERA5-Land,96.6,0.48,2147,5060,-0.37,0.0,-0.531,45,283,45,21,2025-12,-1.08,drought
+Kabambiro (Kamwenge),AWMZ,Climate Variation Impacts ,2021-01-21,2024-10-29,ERA5-Land,94.4,0.12,3488,11774,0.429,0.0,-1.129,10,46,10,0,2024-10,1.15,normal or above
+Masindi,AWMZ,Climate Variation Impacts ,2007-02-16,2025-06-04,ERA5-Land,90.1,0.28,28668,56181,0.151,0.0,0.089,19,186,31,12,2025-06,1.28,normal or above
+Bugondo,KWMZ,Groundwater/Surface Water Interactive Roles,2015-03-01,2026-05-31,ERA5-Land,85.2,0.28,1654,7223,0.164,0.0,0.354,19,132,24,12,2026-05,0.47,normal or above
+Kangole,KWMZ,Abstraction Impacts,1998-10-24,2025-12-01,station + ERA5 fill,82.3,3.55,981,3581,0.302,0.0,0.772,36,212,36,12,2025-12,0.07,normal or above
+Katakwi,KWMZ,Climate Variation Impacts ,2017-10-23,2025-12-01,ERA5-Land,80.8,0.57,103,293,0.355,0.0,0.406,12,65,12,0,2025-12,0.67,normal or above
+Nakasongola,KWMZ,Climate Variation Impacts ,2010-07-01,2025-12-03,station + ERA5 fill,80.8,0.38,52,123,0.161,0.0,0.167,24,138,24,12,2025-12,1.1,normal or above
+Maracha,UNWMZ,,2010-07-01,2026-02-28,ERA5-Land,79.3,0.5,2568,10237,0.145,0.0,0.394,8,140,24,12,2026-02,0.62,normal or above
+Soroti,KWMZ,Climate Variation Impacts ,1998-10-24,2025-12-01,station + ERA5 fill,73.4,0.49,3482,22404,0.029,0.0,0.238,10,294,48,24,2025-12,0.45,normal or above
+Galilaya,AWMZ,Climate Variation Impacts ,2021-01-21,2025-05-30,ERA5-Land,72.4,0.78,256,10764,0.995,0.0,1.001,9,53,12,0,2025-05,1.28,normal or above
+Rwebisengo,AWMZ,Climate Variation Impacts ,2009-04-01,2026-02-28,station + ERA5 fill,72.0,0.21,5708,23300,0.02,0.0,-0.38,14,202,36,12,2026-02,0.3,normal or above
+Isingiro,VWMZ,Climate Variation Impacts ,2007-03-01,2025-12-16,ERA5-Land,70.5,1.57,712,1908,0.368,0.0,0.436,23,213,36,12,2025-12,1.38,normal or above
+Kiboga,AWMZ,Climate Variation Impacts ,2008-04-30,2026-02-26,ERA5-Land,68.4,0.57,2447,10344,0.061,0.0,0.814,18,214,36,12,2026-02,1.09,normal or above
+Ntungamo,VWMZ,Climate Variation Impacts ,2007-02-14,2026-05-31,station + ERA5 fill,67.7,0.93,8545,16745,0.182,0.0,3.14,28,196,30,12,2026-05,0.07,normal or above
+Kitgum,UNWMZ,,2017-10-23,2025-12-31,ERA5-Land,67.6,0.5,61,234,-0.072,0.135,-0.141,4,65,12,0,2025-12,0.0,normal or above
+Pader,UNWMZ,,2017-10-23,2025-12-31,ERA5-Land,63.8,0.62,109,377,-0.115,0.027,-0.088,9,71,12,0,2025-12,0.37,normal or above
+Apac,UNWMZ,,1998-10-29,2026-01-31,ERA5-Land,40.0,0.44,1592,5950,0.017,0.0,0.09,12,277,45,21,2026-01,-0.05,normal or above
+Kapchorwa,KWMZ,Climate Variation Impacts ,2017-10-23,2025-12-01,ERA5-Land,36.8,0.79,86,183,-0.105,0.022,-0.186,4,73,12,0,2025-12,1.47,normal or above
+Kaberamaido,KWMZ,Climate Variation Impacts ,2017-10-23,2025-12-01,ERA5-Land,32.7,0.26,126,292,-0.025,0.21,-0.026,6,69,12,0,2025-12,1.47,normal or above
+Iki-Iki (Budaka),KWMZ,Climate Variation Impacts ,2017-10-23,2025-11-30,ERA5-Land,30.7,0.85,282,884,-0.086,0.127,-0.275,12,68,12,0,2025-11,-0.21,normal or above
+Moroto,KWMZ,Climate Variation Impacts ,2010-11-17,2026-05-31,station + ERA5 fill,18.8,1.47,318,1148,0.025,0.411,0.102,9,165,24,12,2026-05,0.46,normal or above
+Serere,KWMZ,Climate Variation Impacts ,2009-09-25,2025-12-01,station + ERA5 fill,18.5,1.56,46,100,0.141,0.0,0.147,9,187,29,12,2025-12,0.82,normal or above
+Otuke,UNWMZ,,2014-10-01,2026-01-31,ERA5-Land,15.6,1.2,57,188,0.02,0.627,0.057,5,80,12,4,2026-01,1.59,normal or above
+Rakai,VWMZ,Climate Variation Impacts ,1998-11-04,2023-07-06,ERA5-Land,14.2,1.69,547,1249,-0.069,0.0,-0.031,29,297,48,24,2023-07,0.52,normal or above
+Mubende 3,AWMZ,,2015-08-14,2025-12-17,ERA5-Land,6.7,6.8,7,34,0.136,0.082,0.397,9,56,12,0,2025-12,0.52,normal or above
+Bombo Lukole,AWMZ,Abstraction Impacts,1998-10-26,2024-06-24,ERA5-Land,4.4,3.3,7,4449,0.085,0.0,-0.113,16,233,36,12,2024-06,-1.96,severe drought
+Mubende 2,AWMZ,,2015-08-14,2025-06-07,ERA5-Land,0.9,6.0,3,18,-0.317,0.001,-0.072,3,100,12,11,2025-06,-0.97,below normal
+Mubende 1,AWMZ,,2015-08-14,2025-06-07,ERA5-Land,0.7,6.04,4,10,-0.122,0.029,-0.066,3,101,12,11,2025-06,-0.59,below normal

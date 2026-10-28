@@ -1,0 +1,30 @@
+station,wmz,purpose,start,end,n,rain,EVP,RMSE_m,t50_days,t95_days,evap_factor_f
+Kabambiro (Kamwenge),AWMZ,Climate Variation Impacts ,2021-01-21,2024-10-29,1377,ERA5-Land,90.4,0.16,2456,4812,-0.34
+Masindi,AWMZ,Climate Variation Impacts ,2007-02-16,2025-06-04,5414,ERA5-Land,89.3,0.29,28957,66261,-0.0
+Rwonyo,VWMZ,Climate Variation Impacts ,2000-09-05,2025-12-16,8479,ERA5-Land,82.5,1.09,7549,28803,-0.7
+Pader,UNWMZ,,2017-10-23,2025-12-31,1942,ERA5-Land,59.2,0.66,125,429,-0.0
+Kitgum,UNWMZ,,2017-10-23,2025-12-31,1897,ERA5-Land,58.6,0.57,159,671,-0.0
+Isingiro,VWMZ,Climate Variation Impacts ,2007-03-01,2025-12-16,6414,ERA5-Land,58.0,1.88,4303,18556,-0.32
+Katakwi,KWMZ,Climate Variation Impacts ,2017-10-23,2025-12-01,1909,ERA5-Land,56.2,0.87,893,2800,-2.0
+Rwebisengo,AWMZ,Climate Variation Impacts ,2009-04-01,2026-02-28,5913,station + ERA5 fill,52.9,0.27,1134,4563,-0.0
+Soroti,KWMZ,Climate Variation Impacts ,1998-10-24,2025-12-01,8677,station + ERA5 fill,52.8,0.65,241,1405,-0.22
+Alebtong,UNWMZ,,2014-10-01,2026-01-31,2686,ERA5-Land,42.8,0.69,665,2961,-0.0
+Kaberamaido,KWMZ,Climate Variation Impacts ,2017-10-23,2025-12-01,2008,ERA5-Land,28.7,0.27,131,303,-0.2
+Apac,UNWMZ,,1998-10-29,2026-01-31,8256,ERA5-Land,27.3,0.48,7963,31983,-0.79
+Kangole,KWMZ,Abstraction Impacts,1998-10-24,2025-12-01,6296,station + ERA5 fill,26.6,7.23,812,2567,-1.79
+Ntungamo,VWMZ,Climate Variation Impacts ,2007-02-14,2026-05-31,5861,station + ERA5 fill,19.7,1.46,1271,2546,-2.0
+Bugondo,KWMZ,Groundwater/Surface Water Interactive Roles,2015-03-01,2026-05-31,3972,ERA5-Land,18.9,0.66,444,1400,-2.0
+Kapchorwa,KWMZ,Climate Variation Impacts ,2017-10-23,2025-12-01,2047,ERA5-Land,13.8,0.93,87,171,-2.0
+Otuke,UNWMZ,,2014-10-01,2026-01-31,2348,ERA5-Land,13.1,1.21,56,169,-0.0
+Rakai,VWMZ,Climate Variation Impacts ,1998-11-04,2023-07-06,9011,ERA5-Land,12.8,1.7,519,1167,-0.0
+Moroto,KWMZ,Climate Variation Impacts ,2010-11-17,2026-05-31,4879,station + ERA5 fill,12.3,1.52,328,1243,-2.0
+Maracha,UNWMZ,,2010-07-01,2026-02-28,4073,ERA5-Land,12.1,1.03,116,227,-2.0
+Iki-Iki (Budaka),KWMZ,Climate Variation Impacts ,2017-10-23,2025-11-30,1989,ERA5-Land,10.7,0.96,79,155,-2.0
+Kiboga,AWMZ,Climate Variation Impacts ,2008-04-30,2026-02-26,6400,ERA5-Land,6.2,0.97,196,507,-2.0
+Serere,KWMZ,Climate Variation Impacts ,2009-09-25,2025-12-01,5582,station + ERA5 fill,3.4,1.7,45,89,-2.0
+Galilaya,AWMZ,Climate Variation Impacts ,2021-01-21,2025-05-30,1591,ERA5-Land,2.1,1.47,126,824,-2.0
+Mubende 3,AWMZ,,2015-08-14,2025-12-17,1573,ERA5-Land,1.8,6.98,6,26,-0.0
+Mubende 2,AWMZ,,2015-08-14,2025-06-07,2937,ERA5-Land,0.7,6.0,3,18,-2.0
+Mubende 1,AWMZ,,2015-08-14,2025-06-07,2977,ERA5-Land,0.6,6.04,3,9,-1.26
+Bombo Lukole,AWMZ,Abstraction Impacts,1998-10-26,2024-06-24,6804,ERA5-Land,0.1,3.37,12,23,-2.0
+Nakasongola,KWMZ,Climate Variation Impacts ,2010-07-01,2025-12-03,4104,station + ERA5 fill,0.0,0.87,107,690,-0.0

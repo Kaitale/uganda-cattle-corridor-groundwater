@@ -1,0 +1,9 @@
+variable,n,p25,median,p75
+TotalDrilledDepth,12187,54.0,64.0,78.03
+DepthToBedRock,10425,18.3,27.0,38.9
+StaticWaterLevel,10897,6.37,10.37,18.25
+ConstantDischargeYield,9409,0.9,1.53,3.0
+share_yield_ge_3m3h,9409,,0.266,
+share_yield_lt_0.5m3h,9409,,0.036,
+share_flouride_gt_1.5,5193,,0.043,
+share_iron_gt_0.3,6365,,0.158,

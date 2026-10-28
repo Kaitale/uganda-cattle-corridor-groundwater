@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GroundWater Analyst · Uganda 3D · KAI Water &amp; Energy</title>
+<meta name="description" content="GroundWater Analyst by KAI Water &amp; Energy: 3D groundwater models of three regions of Uganda (the central and south-west cattle corridors and the Aswa catchment): real terrain, water table, rock layers, boreholes and drilling logs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#07141B; --bg2:#0B1F2A; --panel:rgba(11,31,42,.82); --panel-solid:#0B1F2A; --line:rgba(147,167,179,.18);
+  --ink:#E6EEF2; --muted:#93A7B3; --teal:#14B8A6; --teal-d:#0E7C86; --water:#38BDF8; --ochre:#C2873A; --sand:#E9DCC3; --slate:#475569; --amber:#F2B544;
+  --f-head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --foot:30px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(120% 90% at 50% 0%, #10303d 0%, #0a1c25 45%, var(--bg) 100%);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased}
+#scene{position:fixed;inset:0 0 var(--foot) 0;touch-action:none}
+#scene canvas{display:block;width:100%;height:100%;outline:none}
+.glass{background:var(--panel);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.eyebrow{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+h1{font-family:var(--f-head);font-weight:700;font-size:1.45rem;line-height:1.12;margin:.35rem 0 .45rem;letter-spacing:-.01em}
+h2{font-family:var(--f-mono);font-weight:500;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 .55rem}
+p{margin:0}
+#title{position:fixed;top:16px;left:16px;width:min(390px,calc(100vw - 32px));padding:16px 18px;z-index:5}
+#title .sub{color:var(--muted);font-size:.86rem;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.stat{border-left:2px solid var(--teal-d);padding-left:8px}
+.stat b{display:block;font-family:var(--f-head);font-size:1.12rem;font-variant-numeric:tabular-nums}
+.stat small{display:block;color:var(--muted);font-size:.68rem;line-height:1.25}
+#panel{position:fixed;top:16px;right:16px;width:300px;max-height:calc(100vh - var(--foot) - 32px);overflow:auto;padding:14px 16px 16px;z-index:5;scrollbar-width:thin}
+#panel section{padding:12px 0;border-top:1px solid var(--line)}
+#panel section:first-of-type{border-top:0;padding-top:4px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:3px;gap:3px}
+.seg button{font:inherit;font-size:.8rem;color:var(--muted);background:transparent;border:0;border-radius:7px;padding:7px 4px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--teal-d);color:#fff}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.86rem;margin:9px 0 0}
+.row label{display:flex;align-items:center;gap:9px;cursor:pointer}
+.sw{width:12px;height:12px;border-radius:3px;flex:none}
+input[type=range]{width:100%;accent-color:var(--teal);margin:8px 0 0}
+.val{font-family:var(--f-mono);font-size:.78rem;color:var(--ink)}
+.tog{appearance:none;width:34px;height:20px;border-radius:20px;background:rgba(255,255,255,.14);position:relative;cursor:pointer;flex:none;transition:background .2s}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#cfd9de;transition:transform .2s}
+.tog:checked{background:var(--teal-d)} .tog:checked::after{transform:translateX(14px);background:#fff}
+.search{display:flex;gap:6px}
+.search input{flex:1;min-width:0;font:inherit;font-size:.86rem;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.btn{font:inherit;font-size:.82rem;font-weight:600;color:#fff;background:var(--teal-d);border:0;border-radius:8px;padding:8px 12px;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn:focus-visible,.seg button:focus-visible,.tog:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.legend{display:grid;gap:7px;font-size:.8rem;color:var(--ink)}
+.legend div{display:flex;align-items:center;gap:9px}
+.note{color:var(--muted);font-size:.74rem;line-height:1.5;margin-top:10px}
+#info{position:fixed;left:16px;bottom:calc(var(--foot) + 16px);width:min(320px,calc(100vw - 32px));padding:14px 16px;z-index:6;transform:translateY(12px);opacity:0;pointer-events:none;transition:.25s}
+#info.show{transform:none;opacity:1;pointer-events:auto}
+#info h3{font-family:var(--f-head);font-size:1.1rem;margin:2px 0 8px}
+#info dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:.84rem}
+#info dt{color:var(--muted)} #info dd{margin:0;text-align:right;font-family:var(--f-mono);font-size:.8rem}
+#info .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:4px 8px}
+.wellbar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:10px;background:#1f2937}
+#compass{position:fixed;right:332px;bottom:calc(var(--foot) + 18px);width:54px;height:54px;z-index:4;display:grid;place-items:center}
+#compass svg{width:54px;height:54px}
+#scalebar{position:fixed;right:398px;bottom:calc(var(--foot) + 26px);z-index:4;font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+#scalebar i{display:block;height:6px;border:1.5px solid var(--sand);border-top:0;margin-bottom:3px}
+.lbl{position:fixed;left:0;top:0;z-index:3;pointer-events:none;font-family:var(--f-mono);font-size:.68rem;color:var(--sand);white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.9);transform:translate(-50%,-140%)}
+.lbl.st{color:var(--amber)} .lbl.lake{color:#9fdcf5;font-style:italic} .lbl.dist{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:#f1e7d3}
+#hint{position:fixed;left:50%;bottom:calc(var(--foot) + 70px);transform:translateX(-50%);z-index:4;font-size:.78rem;color:var(--muted);padding:7px 14px;border-radius:99px;transition:opacity .6s}
+footer{position:fixed;left:0;right:0;bottom:0;height:var(--foot);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;background:#050f14;border-top:1px solid var(--line);color:var(--muted);font-size:.68rem;z-index:7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+footer span{overflow:hidden;text-overflow:ellipsis}
+#loader{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:var(--bg);transition:opacity .8s}
+#loader div{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+#loader i{display:block;width:160px;height:2px;margin:14px auto 0;background:linear-gradient(90deg,transparent,var(--teal),transparent);background-size:200% 100%;animation:sh 1.2s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+#sheetbar{display:none}
+.tabs{display:flex;gap:4px;margin:10px 0 2px;padding:3px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px}
+.tabs a{flex:1;text-align:center;font-size:.74rem;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 4px;border-radius:7px;white-space:nowrap}
+.tabs a:hover{color:var(--ink)} .tabs a[aria-current]{background:var(--teal-d);color:#fff}
+.tabs a:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+#info{max-height:calc(100vh - var(--foot) - 48px);overflow:auto;scrollbar-width:thin}
+.layers{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px;font-size:.78rem}
+.layers:empty{display:none}
+.layers li{display:grid;grid-template-columns:10px 64px 1fr;gap:8px;align-items:start}
+.layers i{width:10px;height:10px;border-radius:2px;margin-top:3px}
+.layers .d{font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+.layers small{display:block;color:var(--muted);font-size:.7rem}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.back{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;color:var(--muted);text-decoration:none;white-space:nowrap}
+.back:hover{color:var(--ink)}
+html.local .back{display:none}
+/* embed mode (?embed=1): the model alone, for the KAI website hero */
+html.embed{--foot:0px}
+html.embed body{background:transparent}
+html.embed #title,html.embed #panel,html.embed footer,html.embed #hint,html.embed #loader,html.embed #compass,html.embed #scalebar{display:none!important}
+html.embed #info{bottom:16px}
+@media (max-width:820px){
+  :root{--foot:44px}
+  footer{white-space:normal;text-align:center;font-size:.62rem;line-height:1.35}
+  #title{top:10px;left:10px;right:10px;width:auto;padding:12px 14px}
+  h1{font-size:1.12rem;margin:.2rem 0 .3rem}
+  #title .sub{display:none}
+  .tabs{margin:6px 0 2px} .tabs a{font-size:.68rem;padding:5px 2px}
+  #info{max-height:46vh}
+  .stats{margin-top:8px;gap:6px}
+  .stat b{font-size:.95rem}
+  #panel{top:auto;right:0;left:0;bottom:var(--foot);width:auto;max-height:62vh;border-radius:18px 18px 0 0;padding:0 16px 14px;transform:translateY(calc(100% - 52px));transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  #panel.open{transform:none}
+  #panel:not(.open) section{visibility:hidden}
+  #sheetbar{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--panel-solid);margin:0 -16px;padding:10px 16px 8px;z-index:2;cursor:pointer;border-radius:18px 18px 0 0}
+  #sheetbar::before{content:"";position:absolute;left:50%;top:6px;width:36px;height:4px;border-radius:4px;background:rgba(255,255,255,.25);transform:translateX(-50%)}
+  #sheetbar b{font-family:var(--f-head);font-size:.95rem;margin-top:6px}
+  #info{left:10px;right:10px;width:auto;bottom:calc(var(--foot) + 62px)}
+  #compass{right:12px;bottom:calc(var(--foot) + 64px);width:44px;height:44px}
+  #compass svg{width:44px;height:44px}
+  #scalebar{right:66px;bottom:calc(var(--foot) + 74px)}
+  #hint{display:none}
+  .lbl.dist{font-size:.64rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script>(function(){var q=new URLSearchParams(location.search),h=document.documentElement;if(q.get('embed')==='1')h.classList.add('embed');if(location.protocol==='file:')h.classList.add('local');})();</script>
+</head>
+<body>
+<div id="loader"><div>Building the model<i></i></div></div>
+<div id="scene"></div>
+
+<div id="title" class="glass">
+  <div class="toprow"><span class="eyebrow">GroundWater Analyst · Uganda</span><a class="back" href="./">← KAI website</a></div>
+  <nav class="tabs" id="tabs" aria-label="Region"></nav>
+  <h1 id="h1">Groundwater beneath Nakasongola and Luwero</h1>
+  <p class="sub" id="sub"></p>
+  <div class="stats" id="stats"></div>
+</div>
+
+<aside id="panel" class="glass" aria-label="Model controls">
+  <div id="sheetbar" role="button" tabindex="0" aria-expanded="false" aria-controls="panel"><b>Explore the model</b><span class="val" id="sheetstate">Show</span></div>
+  <section>
+    <h2>Ground</h2>
+    <div class="seg" id="groundSeg">
+      <button aria-pressed="true" data-v="solid">Solid</button><button aria-pressed="false" data-v="ghost">See-through</button><button aria-pressed="false" data-v="off">Hidden</button>
+    </div>
+    <div class="row"><span>Terrain relief</span><span class="val" id="veVal">25×</span></div>
+    <input type="range" id="ve" min="5" max="60" step="5" value="25" aria-label="Terrain relief exaggeration">
+    <div class="row"><span>Depth below ground</span><span class="val" id="vdVal">130×</span></div>
+    <input type="range" id="vd" min="40" max="250" step="10" value="130" aria-label="Depth exaggeration">
+    <div class="row"><label for="rot">Auto-rotate</label><input type="checkbox" class="tog" id="rot"></div>
+  </section>
+  <section>
+    <h2>Cross-section</h2>
+    <div class="seg" id="cutSeg">
+      <button aria-pressed="false" data-v="none">None</button><button aria-pressed="true" data-v="z">West–east</button><button aria-pressed="false" data-v="x">South–north</button>
+    </div>
+    <input type="range" id="cut" min="3" max="97" step="1" value="50" aria-label="Section position">
+    <p class="note" style="margin-top:6px">Boreholes within 2 km of the section are drawn on the cut face.</p>
+  </section>
+  <section>
+    <h2>Layers</h2>
+    <div class="row"><label for="lWT"><span class="sw" style="background:var(--water)"></span>Water table</label><input type="checkbox" class="tog" id="lWT" checked></div>
+    <div class="row"><label for="lBR"><span class="sw" style="background:#5b6575"></span><span id="lBRt">Top of bedrock</span></label><input type="checkbox" class="tog" id="lBR" checked></div>
+    <div class="row" id="rowCB" hidden><label for="lCB"><span class="sw" style="background:#d9a65b"></span>Base of cover</label><input type="checkbox" class="tog" id="lCB" checked></div>
+    <div class="row"><label for="lWells"><span class="sw" style="background:var(--teal)"></span><span id="lWellsT">Boreholes</span></label><input type="checkbox" class="tog" id="lWells" checked></div>
+    <div class="row"><label for="lFlow"><span class="sw" style="background:#7dd3fc"></span>Groundwater flow</label><input type="checkbox" class="tog" id="lFlow" checked></div>
+    <div class="row"><label for="lLab"><span class="sw" style="background:var(--sand)"></span>Places and stations</label><input type="checkbox" class="tog" id="lLab" checked></div>
+  </section>
+  <section>
+    <div class="row" style="margin-top:0"><button class="btn ghost" id="reset" type="button" style="width:100%">Reset view</button></div>
+  </section>
+  <section>
+    <h2>Legend</h2>
+    <div class="legend" data-legend="corridor">
+      <div><span class="sw" style="background:#6b4f35"></span>Soil</div>
+      <div><span class="sw" style="background:#d9a65b"></span>Regolith (clay, weathered rock)</div>
+      <div><span class="sw" style="background:#3f7c95"></span>Saturated regolith, below the water table</div>
+      <div><span class="sw" style="background:#9e8a73"></span>Weathered and fractured rock (top of bedrock)</div>
+      <div><span class="sw" style="background:repeating-linear-gradient(0deg,#5a5c66 0 3px,#8a8384 3px 6px)"></span>Bedrock (crystalline basement)</div>
+      <div><span class="sw" style="background:var(--water);opacity:.8"></span>Water table surface</div>
+      <div><span class="sw" style="background:#d9a65b"></span>Borehole in regolith</div>
+      <div><span class="sw" style="background:#7b8799"></span>Borehole in bedrock</div>
+      <div><span class="sw" style="background:#7dd3fc;border-radius:50%"></span>Water level in borehole (ring)</div>
+      <div><span class="sw" style="background:#14B8A6"></span>Wellhead</div>
+      <div><span class="sw" style="background:var(--amber);transform:rotate(45deg) scale(.8)"></span>Monitoring station</div>
+    </div>
+    <div class="legend" data-legend="aswa" hidden>
+      <div><span class="sw" style="background:#6b4f35"></span>Soil</div>
+      <div><span class="sw" style="background:#d9a65b"></span>Cover (soil, clay, laterite)</div>
+      <div><span class="sw" style="background:#3f7c95"></span>Saturated, below the water table</div>
+      <div><span class="sw" style="background:#7391a6"></span>Weathered and fractured rock (the aquifer)</div>
+      <div><span class="sw" style="background:repeating-linear-gradient(0deg,#5a5c66 0 3px,#8a8384 3px 6px)"></span>Fresh rock (crystalline basement)</div>
+      <div><span class="sw" style="background:var(--water);opacity:.8"></span>Water table surface</div>
+      <div><span class="sw" style="background:#d9a65b"></span>Log: cover</div>
+      <div><span class="sw" style="background:#2f8fc4"></span>Log: weathered or fractured rock</div>
+      <div><span class="sw" style="background:#7d8696"></span>Log: fresh rock</div>
+      <div><span class="sw" style="background:#a8a8a8"></span>Log: description not classified</div>
+      <div><span class="sw" style="background:#7dd3fc;border-radius:50%"></span>Water level, where matched (ring)</div>
+      <div><span class="sw" style="background:var(--amber);transform:rotate(45deg) scale(.8)"></span>Monitoring station</div>
+    </div>
+    <p class="note" id="method"></p>
+  </section>
+</aside>
+
+<div id="info" class="glass" role="dialog" aria-live="polite">
+  <button class="x" aria-label="Close" id="infoX">×</button>
+  <span class="eyebrow" id="iDist"></span>
+  <h3 id="iId"></h3>
+  <dl id="iDl"></dl>
+  <div class="wellbar" id="iBar"></div>
+  <ul class="layers" id="iLay"></ul>
+</div>
+
+<div id="compass" aria-hidden="true"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="25" fill="rgba(11,31,42,.82)" stroke="rgba(147,167,179,.3)"/><g id="needle"><path d="M27 7 L32 27 L27 24 L22 27 Z" fill="#14B8A6"/><path d="M27 47 L32 27 L27 30 L22 27 Z" fill="#475569"/><text x="27" y="17" text-anchor="middle" font-size="8" font-family="IBM Plex Mono" fill="#E6EEF2" dy="-4">N</text></g></svg></div>
+<div id="scalebar"><i id="sbBar" style="width:80px"></i><span id="sbTxt">10 km</span></div>
+<div id="hint" class="glass">Drag to orbit · scroll or pinch to zoom · tap a borehole for details</div>
+<div id="labels"></div>
+
+<footer><span>Analysis and 3D model © 2026 KAI Water &amp; Energy · Charles Kakooza. Source data: borehole records, drilling logs and monitoring records, Ministry of Water and Environment, Uganda. DEM: 220 m.</span></footer>
+
+<script id="data" type="application/json">__DATA__</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const ALL = JSON.parse(document.getElementById('data').textContent);
+const QS=new URLSearchParams(location.search), EMBED=document.documentElement.classList.contains('embed');
+const RKEY = ALL.regions[QS.get('region')] ? QS.get('region') : ALL.order[0];
+// a region is embedded (self-contained file) or a URL to its JSON (website: one region loaded at a time)
+const D = typeof ALL.regions[RKEY]==='string' ? await (await fetch(ALL.regions[RKEY])).json() : ALL.regions[RKEY], ASWA = !!D.aswa;
+const NX=D.nx, NY=D.ny, STEP=D.step, W=D.w, Hk=D.h;
+const DEM0=Float32Array.from(D.dem), WT=Float32Array.from(D.wt), BR=Float32Array.from(D.br);
+const LAKE=Uint8Array.from(D.lake,c=>c==='1'), DIST=Uint8Array.from(D.dist,c=>c==='1');
+const mobile = matchMedia('(max-width:820px)').matches || matchMedia('(pointer:coarse)').matches;
+const DISTF=EMBED?Math.min(Math.max(parseFloat(QS.get('dist')||'1')||1,0.5),2):1;
+const SHIFT=EMBED?Math.min(Math.max(parseFloat(QS.get('shift')||'0.16')||0,0),0.4):0;
+const N=NX*NY;
+// depths below ground (m) from the original DEM; ground for display (lakes flattened)
+const SD=new Float32Array(N), BD=new Float32Array(N), DEM=Float32Array.from(DEM0);
+for(let i=0;i<N;i++){ SD[i]=Math.max(0.5,DEM0[i]-WT[i]); BD[i]=Math.max(1,DEM0[i]-BR[i]); }
+// cover base (Aswa logs): depth below ground, or -1 where the model has no separate cover layer
+const CD=new Float32Array(N).fill(-1); if(D.cb) for(let i=0;i<N;i++) CD[i]=Math.min(Math.max(0.5,DEM0[i]-D.cb[i]), BD[i]-0.5);
+let Zref=1e9; for(let i=0;i<N;i++) Zref=Math.min(Zref,DEM[i]);
+const GMED=(()=>{ const a=[]; for(let i=0;i<N;i++) if(DIST[i]) a.push(DEM[i]); a.sort((p,q)=>p-q); return a[a.length>>1]||Zref; })();
+
+const wells=D.wells.map(w=>({x:w[0],y:w[1],gz:w[2],depth:w[3],br:w[4],swl:w[5],yld:w[6],dist:w[7],segs:w[8]})).filter(w=>w.depth!=null);
+let DMAX=0; for(const w of wells) DMAX=Math.max(DMAX,w.depth); for(let i=0;i<N;i++) DMAX=Math.max(DMAX,BD[i]+10);
+const MARGIN=20;
+
+// terrain relief: 25x for the gentle central corridor, less where the relief is larger (p2-p98 of ground in the districts)
+const RELIEF=(()=>{ const a=[]; for(let i=0;i<N;i++) if(DIST[i]) a.push(DEM0[i]); a.sort((p,q)=>p-q); return a[Math.floor(a.length*0.98)]-a[Math.floor(a.length*0.02)]; })();
+let VEt=Math.min(25,Math.max(5,Math.round(25*160/Math.max(RELIEF,1)/5)*5)), VEd=130;
+document.getElementById('ve').value=VEt; document.getElementById('veVal').textContent=VEt+'×';
+const gyM = m => (m-Zref)/1000*VEt;            // ground elevation (m a.s.l.) -> y
+const dY = d => d/1000*VEd;                     // depth below ground (m) -> y offset
+let baseY=0; function computeBase(){ let mn=1e9; for(let i=0;i<N;i++) mn=Math.min(mn,gyM(DEM[i])); baseY=mn-dY(DMAX+MARGIN); }
+function bil(G, fx, fy){ fx=Math.min(Math.max(fx,0),NX-1.001); fy=Math.min(Math.max(fy,0),NY-1.001);
+  const i=Math.floor(fx), j=Math.floor(fy), tx=fx-i, ty=fy-j, a=j*NX+i;
+  return G[a]*(1-tx)*(1-ty)+G[a+1]*tx*(1-ty)+G[a+NX]*(1-tx)*ty+G[a+NX+1]*tx*ty; }
+const X = i => i*STEP - W/2, Z = j => Hk/2 - j*STEP;
+const kx = x => x - W/2, kz = y => Hk/2 - y;
+const groundAt=(xk,yk)=>gyM(bil(DEM,xk/STEP,yk/STEP));
+
+// ---------- renderer / scene
+const host=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({antialias:!mobile, alpha:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio, mobile?1.5:2));
+renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.08;
+renderer.localClippingEnabled=true;
+host.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x0a1c25, 320, 780);
+const camera=new THREE.PerspectiveCamera(36, 1, 0.3, 2000);
+const controls=new OrbitControls(camera, renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=0.07; controls.maxPolarAngle=Math.PI*0.53; controls.minDistance=8; controls.maxDistance=420; controls.autoRotateSpeed=0.6;
+if(EMBED){ controls.enableZoom=false; controls.enablePan=false; }
+scene.add(new THREE.HemisphereLight(0xd6ecff, 0x3a2c1f, 0.85));
+const sun=new THREE.DirectionalLight(0xfff0d8, 1.9); sun.position.set(-120,160,90); scene.add(sun);
+const fill=new THREE.DirectionalLight(0xa9d8ff, 0.55); fill.position.set(140,50,160); scene.add(fill);
+const world=new THREE.Group(); scene.add(world);
+
+// clipping: keep the side where plane distance >= 0; ghost shows the removed side
+const clipPlane=new THREE.Plane(new THREE.Vector3(0,0,-1), 0), ghostPlane=new THREE.Plane(new THREE.Vector3(0,0,1), 0);
+const clip=[clipPlane];
+
+// ---------- procedural textures
+function canvasTex(w,h,fn){ const c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); const im=g.createImageData(w,h);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ const [r,gg,b]=fn(x,y); const k=(y*w+x)*4; im.data[k]=r; im.data[k+1]=gg; im.data[k+2]=b; im.data[k+3]=255; }
+  g.putImageData(im,0,0); const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; return t; }
+const rnd=(x,y)=>{ const s=Math.sin(x*127.1+y*311.7)*43758.5453; return s-Math.floor(s); };
+function vnoise(x,y){ const xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi; const u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf);
+  const a=rnd(xi,yi), b=rnd(xi+1,yi), c=rnd(xi,yi+1), d=rnd(xi+1,yi+1); return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v; }
+function fbm(x,y){ let s=0,a=.5,f=1; for(let i=0;i<4;i++){ s+=a*vnoise(x*f,y*f); f*=2; a*=.5; } return s; }
+const waterNormal=canvasTex(128,128,(x,y)=>{ const h=(dx,dy)=>fbm((x+dx)/14,(y+dy)/14); const nx=(h(-1,0)-h(1,0))*4, ny=(h(0,-1)-h(0,1))*4; return [128+nx*127,128+ny*127,255]; });
+waterNormal.repeat.set(24,32);
+const detail=canvasTex(256,256,(x,y)=>{ const n=fbm(x/9,y/9)*0.7+rnd(x,y)*0.3; const v=200+n*55; return [v,v,v]; }); detail.repeat.set(30,40);
+const rockTex=canvasTex(256,256,(x,y)=>{ const n=fbm(x/22,y/7); const band=Math.sin(y/3.2+n*7)*.5+.5; const v=95+band*45+rnd(x,y)*18; return [v*1.0,v*0.97,v*0.97]; }); rockTex.repeat.set(8,10);
+
+// ---------- grid surfaces
+function gridGeometry(){
+  const pos=new Float32Array(N*3), uv=new Float32Array(N*2);
+  for(let j=0;j<NY;j++) for(let i=0;i<NX;i++){ const k=j*NX+i; pos[k*3]=X(i); pos[k*3+2]=Z(j); uv[k*2]=i/(NX-1); uv[k*2+1]=j/(NY-1); }
+  const idx=[]; for(let j=0;j<NY-1;j++) for(let i=0;i<NX-1;i++){ const a=j*NX+i,b=a+1,c=a+NX,d=c+1; idx.push(a,b,c,b,d,c); }
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3)); g.setAttribute('uv',new THREE.BufferAttribute(uv,2)); g.setIndex(idx); return g;
+}
+function setHeights(g, f){ const p=g.attributes.position.array; for(let k=0;k<N;k++) p[k*3+1]=f(k); g.attributes.position.needsUpdate=true; g.computeVertexNormals(); g.computeBoundingSphere(); }
+const tg=gridGeometry();
+{ let lo=1e9,hi=-1e9; for(let i=0;i<N;i++) if(DIST[i]&&!LAKE[i]){ lo=Math.min(lo,DEM[i]); hi=Math.max(hi,DEM[i]); }
+  const stops=[[0,[0x4f,0x6b,0x35]],[0.25,[0x6f,0x80,0x3e]],[0.5,[0x96,0x8f,0x52]],[0.75,[0xb0,0x92,0x60]],[1,[0xc9,0xb2,0x86]]];
+  const col=new Float32Array(N*3);
+  for(let j=0;j<NY;j++) for(let i=0;i<NX;i++){ const k=j*NX+i; let c;
+    if(LAKE[k]) c=[0x1d,0x5e,0x7a];
+    else { let t=Math.min(Math.max((DEM[k]-lo)/(hi-lo),0),1); let s=0; while(s<stops.length-2 && t>stops[s+1][0]) s++;
+      const u=(t-stops[s][0])/(stops[s+1][0]-stops[s][0]); c=stops[s][1].map((v,q)=>v+(stops[s+1][1][q]-v)*u);
+      const n=fbm(i*0.35,j*0.35)-0.5; c=c.map(v=>v*(1+n*0.22)); if(!DIST[k]) c=c.map(v=>v*0.62+20); }
+    for(let q=0;q<3;q++) col[k*3+q]=Math.pow(c[q]/255,2.2); }
+  tg.setAttribute('color',new THREE.BufferAttribute(col,3)); }
+const terrainMat=new THREE.MeshStandardMaterial({vertexColors:true, map:detail, roughness:0.96, metalness:0, clippingPlanes:clip});
+const terrain=new THREE.Mesh(tg, terrainMat); world.add(terrain);
+const ghostMat=new THREE.MeshStandardMaterial({vertexColors:true, roughness:1, transparent:true, opacity:0.2, depthWrite:false, clippingPlanes:[ghostPlane]});
+const ghost=new THREE.Mesh(tg, ghostMat); ghost.renderOrder=1; world.add(ghost);
+const wtG=gridGeometry(), brG=gridGeometry();
+const wtMat=new THREE.MeshStandardMaterial({color:0x38bdf8, emissive:0x0b3b52, emissiveIntensity:0.7, roughness:0.18, metalness:0.05, normalMap:waterNormal, normalScale:new THREE.Vector2(0.6,0.6), transparent:true, opacity:0.6, depthWrite:false, side:THREE.DoubleSide, clippingPlanes:clip});
+const wtMesh=new THREE.Mesh(wtG, wtMat); wtMesh.renderOrder=2; world.add(wtMesh);
+const brMat=new THREE.MeshStandardMaterial({color:0xb3a596, map:rockTex, roughness:0.9, side:THREE.DoubleSide, clippingPlanes:clip});
+const brMesh=new THREE.Mesh(brG, brMat); world.add(brMesh);
+const cbG=gridGeometry(), cbMat=new THREE.MeshStandardMaterial({color:0xd9a65b, roughness:0.85, transparent:true, opacity:0.55, depthWrite:false, side:THREE.DoubleSide, clippingPlanes:clip});
+const cbMesh=new THREE.Mesh(cbG, cbMat); cbMesh.renderOrder=1; cbMesh.visible=!!D.cb; world.add(cbMesh);
+
+// ---------- strata material (walls and cut face): colour by depth below ground in metres
+const GLSL_NOISE=`
+float h21(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float vn(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
+  return mix(mix(h21(i),h21(i+vec2(1,0)),u.x), mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),u.x), u.y); }
+float fb(vec2 p){ float s=0.0,a=0.5; for(int i=0;i<4;i++){ s+=a*vn(p); p*=2.03; a*=0.5; } return s; }`;
+const strataMats=[];
+function strataMaterial(clipped){
+  const m=new THREE.MeshStandardMaterial({roughness:0.9, metalness:0, side:THREE.DoubleSide, clippingPlanes:clipped?clip:null});
+  m.userData.u={uVEd:{value:VEd}, uBase:{value:0}, uHasCB:{value:D.cb?1:0}};
+  m.onBeforeCompile=sh=>{
+    Object.assign(sh.uniforms, m.userData.u);
+    sh.vertexShader=sh.vertexShader.replace('#include <common>',`#include <common>
+attribute float aWT; attribute float aBR; attribute float aTop; attribute float aS; attribute float aCB;
+varying float vWT; varying float vBR; varying float vTop; varying float vS; varying float vZ; varying float vCB;`)
+      .replace('#include <begin_vertex>',`#include <begin_vertex>
+vWT=aWT; vBR=aBR; vTop=aTop; vS=aS; vZ=position.y; vCB=aCB;`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
+uniform float uVEd; uniform float uBase; uniform float uHasCB;
+varying float vWT; varying float vBR; varying float vTop; varying float vS; varying float vZ; varying float vCB;`+GLSL_NOISE)
+      .replace('#include <color_fragment>',`#include <color_fragment>
+{
+  float dm=(vTop-vZ)*1000.0/uVEd;           // depth below ground, metres
+  float n=fb(vec2(vS*2.6, dm*0.11)); float n2=fb(vec2(vS*11.0, dm*0.9));
+  vec3 soil=vec3(0.42,0.31,0.21), reg1=vec3(0.80,0.56,0.31), reg2=vec3(0.92,0.79,0.57), sat=vec3(0.24,0.58,0.78);
+  vec3 r1=vec3(0.40,0.40,0.44), r2=vec3(0.66,0.61,0.60), wz=vec3(0.66,0.56,0.45);
+  vec3 col;
+  if(dm < 2.5 + n*1.5){ col=mix(soil, soil*1.35, n2); }
+  else if(dm < (uHasCB>0.5 ? vCB : vBR)){
+    float d=dm/max(uHasCB>0.5 ? vCB : vBR,1.0);
+    col=mix(reg2, reg1, smoothstep(0.05,1.0,d)); col*=0.86+0.26*n2;
+    col=mix(col, vec3(0.70,0.40,0.24), smoothstep(0.58,0.78,n)*0.4);           // iron-stained mottles
+    col=mix(col, col*0.82, smoothstep(0.62,0.7,fb(vec2(vS*30.0, dm*0.6))));     // clay lenses
+    if(dm > vWT){ col=mix(col, sat, 0.55); }
+  } else {
+    float top=uHasCB>0.5 ? vCB : vBR, below=dm-top;
+    float band=sin(dm*0.42 + n*7.0 + fb(vec2(vS*0.8, dm*0.02))*6.0)*0.5+0.5; float grain=fb(vec2(vS*60.0, dm*1.6)); col=mix(r1, r2, band*0.22+n2*0.3+grain*0.25+0.12);
+    float sap=uHasCB>0.5 ? 1.0-smoothstep(vBR-top-1.5+n*2.0, vBR-top+1.5+n*2.0, below)   // logged weathered / fractured rock
+                         : 1.0-smoothstep(4.0, 16.0+n*6.0, below);                    // weathered / fractured zone
+    float frac=smoothstep(0.9,0.98,fb(vec2(vS*16.0, dm*0.35)));
+    col=mix(col, (uHasCB>0.5 ? vec3(0.45,0.57,0.66) : wz)*(0.85+0.3*n2), sap*(uHasCB>0.5?0.95:0.75));
+    col=mix(col, vec3(0.13,0.14,0.17), frac*(0.25+sap*0.5));
+    if(dm > vWT) col=mix(col, sat*0.85, 0.08+sap*(uHasCB>0.5?0.45:0.3));
+    col*=mix(0.6,1.0,smoothstep(uBase, uBase+6.0, vZ));
+  }
+  float wl=1.0-smoothstep(0.35, 0.9, abs(dm-vWT)); col=mix(col, vec3(0.62,0.93,1.0), wl);
+  diffuseColor.rgb=pow(col, vec3(2.2));
+}`);
+  };
+  strataMats.push(m); return m;
+}
+const wallMat=strataMaterial(true), sliceMat=strataMaterial(false);
+function wallGeometry(cols){ // cols: [{x,z,top(y),wt(m),br(m),s}]
+  const n=cols.length, pos=new Float32Array(n*2*3), aWT=new Float32Array(n*2), aBR=new Float32Array(n*2), aTop=new Float32Array(n*2), aS=new Float32Array(n*2), aCB=new Float32Array(n*2);
+  cols.forEach((c,i)=>{ for(let k=0;k<2;k++){ const v=i*2+k; pos[v*3]=c.x; pos[v*3+1]=k?baseY:c.top; pos[v*3+2]=c.z; aWT[v]=c.wt; aBR[v]=c.br; aTop[v]=c.top; aS[v]=c.s; aCB[v]=c.cb; } });
+  const idx=[]; for(let i=0;i<n-1;i++){ const a=i*2,b=a+1,c=a+2,d=a+3; idx.push(a,b,c,c,b,d); }
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  for(const [k,v] of [['aWT',aWT],['aBR',aBR],['aTop',aTop],['aS',aS],['aCB',aCB]]) g.setAttribute(k,new THREE.BufferAttribute(v,1));
+  g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+const colAt=(fx,fy)=>({x:fx*STEP-W/2, z:Hk/2-fy*STEP, top:gyM(bil(DEM,fx,fy)), wt:bil(SD,fx,fy), br:bil(BD,fx,fy), cb:bil(CD,fx,fy)});
+const walls=new THREE.Group(); world.add(walls);
+function buildWalls(){
+  walls.children.forEach(m=>m.geometry.dispose()); walls.clear();
+  for(const f of [t=>[t*(NX-1),0], t=>[t*(NX-1),NY-1], t=>[0,t*(NY-1)], t=>[NX-1,t*(NY-1)]]){
+    const cols=[]; for(let t=0;t<=260;t++){ const [fx,fy]=f(t/260); const c=colAt(fx,fy); c.s=t/260*14; cols.push(c);} walls.add(new THREE.Mesh(wallGeometry(cols), wallMat)); }
+}
+const base=new THREE.Mesh(new THREE.PlaneGeometry(W,Hk), new THREE.MeshStandardMaterial({color:0x1a222b, roughness:1, clippingPlanes:clip, side:THREE.DoubleSide}));
+base.rotation.x=-Math.PI/2; world.add(base);
+const shadow=(()=>{ const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d'); const gr=g.createRadialGradient(64,64,10,64,64,64); gr.addColorStop(0,'rgba(0,0,0,.55)'); gr.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=gr; g.fillRect(0,0,128,128);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(W*1.7,Hk*1.6), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false})); m.rotation.x=-Math.PI/2; scene.add(m); return m; })();
+
+// ---------- wells: tubes, caps, water-level rings; near-section wells projected onto the cut face
+const cyl=new THREE.CylinderGeometry(1,1,1,12,1,false); cyl.translate(0,-0.5,0); // top at 0
+const R_FAR=mobile?0.34:0.28, R_NEAR=mobile?0.55:0.48;
+function makeInst(count, clipped, emissive){ const m=new THREE.InstancedMesh(cyl, new THREE.MeshStandardMaterial({roughness:0.45, metalness:0.15, emissive:emissive||0x000000, clippingPlanes:clipped?clip:null}), Math.max(count,1)); m.count=0; m.frustumCulled=false; world.add(m); return m; }
+const maxSeg=wells.reduce((a,w)=>a+(w.segs?w.segs.length:2)+2,0);
+const farTubes=makeInst(maxSeg,true), nearTubes=makeInst(maxSeg,false,0x1a1206);
+const C_REG=new THREE.Color(0xd9a65b), C_BED=new THREE.Color(0x7d8696), C_RING=new THREE.Color(0x7dd3fc), C_CAP=new THREE.Color(0x14b8a6);
+// layer classes: 0 regolith, 1 bedrock, 2 cover, 3 weathered/fractured rock, 4 fresh rock, 9 not classified
+const CLS={0:['Regolith','#d9a65b'],1:['Bedrock','#7d8696'],2:['Cover','#d9a65b'],3:['Weathered / fractured rock','#2f8fc4'],4:['Fresh rock','#7d8696'],9:[ASWA?'Not classified':'Regolith',ASWA?'#a8a8a8':'#d9a65b']};
+const CCOL={}; for(const k in CLS) CCOL[k]=new THREE.Color(CLS[k][1]);
+const m4=new THREE.Matrix4(), q4=new THREE.Quaternion(), s3=new THREE.Vector3(), p3=new THREE.Vector3(), c3=new THREE.Color();
+let nearSet=new Set(), pickPos=[];
+function pushTube(mesh, x, z, yTop, yBot, r, color){ const i=mesh.count++; p3.set(x,yTop,z); s3.set(r,Math.max(yTop-yBot,0.02),r); m4.compose(p3,q4,s3); mesh.setMatrixAt(i,m4); mesh.setColorAt(i,color); }
+function buildWells(){
+  farTubes.count=0; nearTubes.count=0; nearSet=new Set(); pickPos=[];
+  const sectionOn=cutAxis!=='none';
+  const cutK = cutAxis==='z' ? Hk*(1-cutPos) : W*cutPos;     // cut coordinate in km (north for z, east for x)
+  wells.forEach((w,i)=>{
+    const near = sectionOn && Math.abs((cutAxis==='z'? w.y : w.x) - cutK) <= 2.0;
+    let x=kx(w.x), z=kz(w.y);
+    if(near){ if(cutAxis==='z') z=kz(cutK)+0.06; else x=kx(cutK)-0.06; nearSet.add(i); }
+    const g=gyM(w.gz), mesh=near?nearTubes:farTubes, r=near?R_NEAR:R_FAR, dim=(sectionOn&&!near)?0.55:1;
+    for(const [a,b2,c] of w.segs) pushTube(mesh,x,z,g-dY(a),g-dY(b2),r,c3.copy(CCOL[c]).multiplyScalar(dim));
+    if(w.swl!=null){ const y=g-dY(w.swl); pushTube(mesh,x,z,y+0.12,y-0.12,r*2.1,c3.copy(C_RING).multiplyScalar(near?1.25:dim)); }
+    pushTube(mesh,x,z,g+0.22,g-0.02,r*1.7,c3.copy(C_CAP).multiplyScalar(near?1.15:dim));
+    pickPos.push([x,g+0.22,z,near,g-dY(w.depth)]);
+  });
+  for(const m of [farTubes,nearTubes]){ m.instanceMatrix.needsUpdate=true; if(m.instanceColor) m.instanceColor.needsUpdate=true; }
+}
+function sprite(draw){ const c=document.createElement('canvas'); c.width=c.height=64; draw(c.getContext('2d')); const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t; }
+const selTex=sprite(g=>{ g.beginPath(); g.arc(32,32,26,0,7); g.lineWidth=5; g.strokeStyle='#F2B544'; g.stroke(); });
+const sel=new THREE.Points(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(3),3)), new THREE.PointsMaterial({map:selTex,size:28,sizeAttenuation:false,transparent:true,depthTest:false}));
+sel.visible=false; sel.renderOrder=10; world.add(sel); let selIdx=-1;
+
+// ---------- outlines, stations, labels
+const outlines=new THREE.Group(); world.add(outlines); const outlinePts=[];
+for(const [name,rings] of Object.entries(D.outlines)) for(const ring of rings){ const pts=[];
+  for(let i=0;i<ring.length-1;i++){ const [ax,ay]=ring[i], [bx,by]=ring[i+1]; const n=Math.max(1,Math.ceil(Math.hypot(bx-ax,by-ay)/0.4)); for(let t=0;t<n;t++) pts.push([ax+(bx-ax)*t/n, ay+(by-ay)*t/n]); }
+  pts.push(pts[0]); const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(pts.length*3),3));
+  outlines.add(new THREE.Line(g, new THREE.LineBasicMaterial({color:0xf1e7d3, transparent:true, opacity:0.75, clippingPlanes:clip}))); outlinePts.push(pts); }
+function buildOutlines(){ outlines.children.forEach((l,k)=>{ const a=l.geometry.attributes.position.array; outlinePts[k].forEach(([x,y],i)=>{ a[i*3]=kx(x); a[i*3+1]=groundAt(x,y)+0.08; a[i*3+2]=kz(y); }); l.geometry.attributes.position.needsUpdate=true; l.geometry.computeBoundingSphere(); }); }
+const stTex=sprite(g=>{ g.translate(32,32); g.rotate(Math.PI/4); g.fillStyle='#F2B544'; g.fillRect(-15,-15,30,30); g.lineWidth=4; g.strokeStyle='#07141B'; g.strokeRect(-15,-15,30,30); });
+const stG=new THREE.BufferGeometry(); stG.setAttribute('position',new THREE.BufferAttribute(new Float32Array(D.stations.length*3),3));
+const stPts=new THREE.Points(stG, new THREE.PointsMaterial({map:stTex,size:13,sizeAttenuation:false,transparent:true,alphaTest:.3,clippingPlanes:clip})); stPts.renderOrder=5; world.add(stPts);
+function buildStations(){ const a=stG.attributes.position.array; D.stations.forEach((s,i)=>{ a[i*3]=kx(s[0]); a[i*3+1]=groundAt(s[0],s[1])+0.15; a[i*3+2]=kz(s[1]); }); stG.attributes.position.needsUpdate=true; stG.computeBoundingSphere(); }
+const labelsEl=document.getElementById('labels'); const labels=[];
+function addLabel(text,cls,x,y,up){ const el=document.createElement('div'); el.className='lbl '+cls; el.textContent=text; labelsEl.appendChild(el); labels.push({el,x,y,up,dy:cls==='st'?'40%':'-140%',v:new THREE.Vector3()}); }
+for(const [name,rings] of Object.entries(D.outlines)){ let sx=0,sy=0,n=0; const big=rings.reduce((a,b)=>b.length>a.length?b:a); for(const [x,y] of big){ sx+=x; sy+=y; n++; } addLabel(name,'dist',sx/n,sy/n,0.5); }
+if(!EMBED) D.stations.forEach(s=>addLabel(s[2]+' station','st',s[0],s[1],0.2));
+(D.lakes||[]).forEach(l=>addLabel(l[2],'lake',l[0],l[1],0.1));
+function buildLabels(){ for(const l of labels) l.v.set(kx(l.x), groundAt(l.x,l.y)+l.up, kz(l.y)); }
+
+// ---------- groundwater flow particles (down the gradient of the smoothed head surface), drawn at the water table
+const SH=Float32Array.from(WT);
+for(let pass=0;pass<4;pass++){ const t=Float32Array.from(SH); for(let j=1;j<NY-1;j++) for(let i=1;i<NX-1;i++){ const k=j*NX+i; SH[k]=(t[k]*4+t[k-1]+t[k+1]+t[k-NX]+t[k+NX])/8; } }
+const GX=new Float32Array(N), GY=new Float32Array(N); const mags=[];
+for(let j=1;j<NY-1;j++) for(let i=1;i<NX-1;i++){ const k=j*NX+i; GX[k]=-(SH[k+1]-SH[k-1])/2; GY[k]=-(SH[k+NX]-SH[k-NX])/2; mags.push(Math.hypot(GX[k],GY[k])); }
+mags.sort((a,b)=>a-b); const g90=mags[Math.floor(mags.length*0.9)]||1;
+const NP=mobile?1000:2600; const pPos=new Float32Array(NP*3), pCol=new Float32Array(NP*3); const P=[];
+function spawn(p){ p.x=1+Math.random()*(NX-3); p.y=1+Math.random()*(NY-3); p.age=0; p.life=3+Math.random()*4; }
+for(let i=0;i<NP;i++){ const p={}; spawn(p); p.age=Math.random()*p.life; P.push(p); }
+const pG=new THREE.BufferGeometry(); pG.setAttribute('position',new THREE.BufferAttribute(pPos,3)); pG.setAttribute('color',new THREE.BufferAttribute(pCol,3));
+const flowTex=sprite(g=>{ const gr=g.createRadialGradient(32,32,0,32,32,30); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(1,'rgba(255,255,255,0)'); g.fillStyle=gr; g.fillRect(0,0,64,64); });
+const flow=new THREE.Points(pG, new THREE.PointsMaterial({size:mobile?0.9:0.8, map:flowTex, vertexColors:true, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, clippingPlanes:clip}));
+flow.renderOrder=6; flow.frustumCulled=false; world.add(flow);
+function stepFlow(dt){
+  for(let i=0;i<NP;i++){ const p=P[i]; p.age+=dt; const gx=bil(GX,p.x,p.y), gy=bil(GY,p.x,p.y); const m=Math.hypot(gx,gy)/g90;
+    const sp=(0.6+1.8*Math.min(m,1.5))*dt*2.2; const nm=Math.hypot(gx,gy)||1; p.x+=gx/nm*sp; p.y+=gy/nm*sp;
+    if(p.age>p.life||p.x<1||p.y<1||p.x>NX-2||p.y>NY-2||m<0.02) spawn(p);
+    const a=Math.sin(Math.PI*Math.min(p.age/p.life,1)); pPos[i*3]=p.x*STEP-W/2; pPos[i*3+1]=gyM(bil(DEM,p.x,p.y))-dY(bil(SD,p.x,p.y))+0.1; pPos[i*3+2]=Hk/2-p.y*STEP;
+    pCol[i*3]=0.75*a; pCol[i*3+1]=0.97*a; pCol[i*3+2]=1.0*a; }
+  pG.attributes.position.needsUpdate=true; pG.attributes.color.needsUpdate=true;
+}
+
+// ---------- section (cut plane + capped face)
+let slice=null, cutAxis='z', cutPos=0.5;
+function buildCut(){
+  if(slice){ world.remove(slice); slice.geometry.dispose(); slice=null; }
+  if(cutAxis==='none'){ clipPlane.set(new THREE.Vector3(0,1,0), 1e5); ghostPlane.set(new THREE.Vector3(0,-1,0), -1e5); return; }
+  const cols=[];
+  if(cutAxis==='z'){ // west-east section: plane z = zc, keep north (z <= zc), camera looks from the south
+    const fy=(1-cutPos)*(NY-1); for(let t=0;t<=300;t++){ const fx=t/300*(NX-1); const c=colAt(fx,fy); c.s=t/300*14; cols.push(c);}
+    const zc=Hk/2-fy*STEP; clipPlane.set(new THREE.Vector3(0,0,-1), zc); ghostPlane.set(new THREE.Vector3(0,0,1), -zc); }
+  else { // south-north section: plane x = xc, keep east, camera looks from the west
+    const fx=cutPos*(NX-1); for(let t=0;t<=300;t++){ const fy=t/300*(NY-1); const c=colAt(fx,fy); c.s=t/300*14; cols.push(c);}
+    const xc=fx*STEP-W/2; clipPlane.set(new THREE.Vector3(1,0,0), -xc); ghostPlane.set(new THREE.Vector3(-1,0,0), xc); }
+  slice=new THREE.Mesh(wallGeometry(cols), sliceMat); world.add(slice);
+}
+
+// ---------- rebuild everything that depends on the vertical scales
+function rebuild(){
+  computeBase();
+  setHeights(tg, k=>gyM(DEM[k])); setHeights(wtG, k=>gyM(DEM[k])-dY(SD[k])); setHeights(brG, k=>gyM(DEM[k])-dY(BD[k])); if(D.cb) setHeights(cbG, k=>gyM(DEM[k])-dY(CD[k]));
+  base.position.y=baseY+0.01; shadow.position.y=baseY-0.6;
+  for(const m of strataMats){ m.userData.u.uVEd.value=VEd; m.userData.u.uBase.value=baseY; }
+  buildWalls(); buildCut(); buildWells(); buildOutlines(); buildStations(); buildLabels();
+  if(selIdx>=0) placeSel();
+}
+
+// ---------- UI
+const S=D.stats;
+document.getElementById('h1').textContent=D.title; document.getElementById('sub').textContent=D.sub;
+document.title='GroundWater Analyst · '+ALL.tabs[RKEY]+' 3D · KAI Water & Energy';
+document.getElementById('tabs').innerHTML=ALL.order.map(k=>{ const q=new URLSearchParams(location.search); q.set('region',k);
+  return `<a href="?${q}" ${k===RKEY?'aria-current="page"':''}>${ALL.tabs[k]}</a>`; }).join('');
+document.getElementById('lBRt').textContent=ASWA?'Top of fresh rock':'Top of bedrock';
+document.getElementById('rowCB').hidden=!D.cb;
+document.querySelectorAll('[data-legend]').forEach(el=>el.hidden=el.dataset.legend!==D.legend);
+document.getElementById('lWellsT').textContent=ASWA?'Drilling logs':'Boreholes';
+document.getElementById('hint').textContent='Drag to orbit · scroll or pinch to zoom · tap a '+(ASWA?'log':'borehole')+' for details';
+document.getElementById('stats').innerHTML=S
+  .map(([b,s])=>`<div class="stat"><b>${b}</b><small>${s}</small></div>`).join('');
+document.getElementById('method').textContent=D.method;
+function setSeg(id,v){ document.querySelectorAll('#'+id+' button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===v))); }
+let groundMode='solid';
+function setGround(v){ groundMode=v; setSeg('groundSeg',v); terrain.visible=v!=='off'; ghost.visible=v!=='off'&&cutAxis!=='none';
+  terrainMat.transparent=v==='ghost'; terrainMat.opacity=v==='ghost'?0.28:1; terrainMat.depthWrite=v!=='ghost'; terrainMat.needsUpdate=true; }
+document.getElementById('groundSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) setGround(b.dataset.v); });
+document.getElementById('cutSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; cutAxis=b.dataset.v; setSeg('cutSeg',cutAxis); document.getElementById('cut').disabled=cutAxis==='none'; ghost.visible=cutAxis!=='none'&&groundMode!=='off'; buildCut(); buildWells(); });
+document.getElementById('cut').addEventListener('input',e=>{ cutPos=e.target.value/100; buildCut(); buildWells(); });
+document.getElementById('ve').addEventListener('input',e=>{ VEt=+e.target.value; document.getElementById('veVal').textContent=VEt+'×'; rebuild(); });
+document.getElementById('vd').addEventListener('input',e=>{ VEd=+e.target.value; document.getElementById('vdVal').textContent=VEd+'×'; rebuild(); });
+document.getElementById('rot').addEventListener('change',e=>controls.autoRotate=e.target.checked);
+const bind=(id,objs)=>document.getElementById(id).addEventListener('change',e=>objs().forEach(o=>o.visible=e.target.checked));
+bind('lWT',()=>[wtMesh]); bind('lBR',()=>[brMesh]); bind('lCB',()=>[cbMesh]); bind('lWells',()=>[farTubes,nearTubes]); bind('lFlow',()=>[flow]);
+document.getElementById('lLab').addEventListener('change',e=>{ labelsEl.style.display=e.target.checked?'':'none'; outlines.visible=stPts.visible=e.target.checked; });
+const panel=document.getElementById('panel'), bar=document.getElementById('sheetbar');
+bar.addEventListener('click',()=>{ const o=panel.classList.toggle('open'); bar.setAttribute('aria-expanded',o); document.getElementById('sheetstate').textContent=o?'Hide':'Show'; });
+bar.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); bar.click(); } });
+
+const fmt=(v,u='m')=>v==null?'n/a':`${v.toFixed(1)} ${u}`;
+const info=document.getElementById('info');
+function placeSel(){ const p=pickPos[selIdx]; sel.geometry.attributes.position.array.set([p[0],p[1]+0.2,p[2]]); sel.geometry.attributes.position.needsUpdate=true; sel.visible=true; }
+function showWell(i){ const w=wells[i]; selIdx=i;
+  document.getElementById('iDist').textContent=w.dist+' district'+(nearSet.has(i)?' · on section':'');
+  document.getElementById('iId').textContent=ASWA?'Drilling log':'Borehole';
+  const cb=ASWA?w.segs.filter(s=>s[2]===2).reduce((a,s)=>Math.max(a,s[1]),0):null;
+  const rows=ASWA?[['Ground elevation',fmt(w.gz,'m a.s.l.')],['Drilled depth',fmt(w.depth)],['Base of cover',cb?fmt(cb):'no cover logged'],['Top of fresh rock',w.br==null?'not reached':fmt(w.br)],
+      ['Static water level',w.swl==null?'n/a':`${w.swl.toFixed(1)} m below ground`],['Yield',fmt(w.yld,'m³/h')]]
+    :[['Ground elevation',fmt(w.gz,'m a.s.l.')],['Drilled depth',fmt(w.depth)],['Depth to bedrock',w.br==null?'not reached / n/a':fmt(w.br)],
+      ['Static water level',w.swl==null?'n/a':`${w.swl.toFixed(1)} m below ground`],['Water level elevation',w.swl==null?'n/a':fmt(w.gz-w.swl,'m a.s.l.')],['Yield',fmt(w.yld,'m³/h')]];
+  document.getElementById('iDl').innerHTML=rows.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
+  const d=w.depth||1; document.getElementById('iBar').innerHTML=w.segs.map(s=>`<span style="width:${(s[1]-s[0])/d*100}%;background:${CLS[s[2]][1]}"></span>`).join('');
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.getElementById('iLay').innerHTML=ASWA?w.segs.map(s=>`<li><i style="background:${CLS[s[2]][1]}"></i><span class="d">${s[0].toFixed(0)}–${s[1].toFixed(0)} m</span><span>${CLS[s[2]][0]}${s[3]?`<small>${esc(s[3])}</small>`:''}</span></li>`).join(''):'';
+  info.classList.add('show'); placeSel(); }
+document.getElementById('infoX').onclick=()=>{ info.classList.remove('show'); sel.visible=false; selIdx=-1; };
+const v3=new THREE.Vector3();
+let down=null; renderer.domElement.addEventListener('pointerdown',e=>{ down=[e.clientX,e.clientY]; hideHint(); sway.idle=performance.now(); sway.on=false; });
+renderer.domElement.addEventListener('pointerup',e=>{ if(!down) return; const moved=Math.hypot(e.clientX-down[0],e.clientY-down[1]); down=null; if(moved>6||!farTubes.visible) return;
+  const r=renderer.domElement.getBoundingClientRect(); let best=-1, bd=mobile?28:20;
+  const mx=e.clientX-r.left, my=e.clientY-r.top, b3=new THREE.Vector3();
+  pickPos.forEach((p,i)=>{ v3.set(p[0],p[1],p[2]); if(!p[3] && clipPlane.distanceToPoint(v3)<0) return; v3.project(camera); if(v3.z>1) return;
+    const ax=(v3.x+1)/2*r.width, ay=(1-v3.y)/2*r.height; let d=Math.hypot(ax-mx, ay-my);
+    if(p[3] || groundMode!=='solid'){ b3.set(p[0],p[4],p[2]).project(camera); const bx=(b3.x+1)/2*r.width, by=(1-b3.y)/2*r.height;
+      const vx=bx-ax, vy=by-ay, L2=vx*vx+vy*vy||1, t=Math.max(0,Math.min(1,((mx-ax)*vx+(my-ay)*vy)/L2)); d=Math.min(d, Math.hypot(ax+vx*t-mx, ay+vy*t-my)+2); }
+    if(p[3]) d*=0.7;
+    if(d<bd){ bd=d; best=i; } });
+  if(best>=0) showWell(best); });
+
+// camera
+let tween=null;
+function flyTo(pos,target,dur=1.6){ tween={p0:camera.position.clone(), t0:controls.target.clone(), p1:pos.clone(), t1:target.clone(), s:performance.now(), d:dur*1000}; }
+function sectionView(cp=cutPos){ // low oblique, facing the capped cut face
+  const g0=gyM(GMED), depth=g0-baseY, mid=g0-depth*(mobile?0.2:0.38);
+  const dist=(mobile?3.3:1.7)*(EMBED?(mobile?0.78:1.16)*DISTF:1)*Math.max(depth*2.4, 55), up=g0+depth*(mobile?1.6:1.05);
+  if(cutAxis==='x'){ const xc=-W/2+cp*W; return {pos:new THREE.Vector3(xc-dist, up, dist*0.32), target:new THREE.Vector3(xc+4, mid, mobile?0:-6)}; }
+  const zc=Hk/2-(1-cp)*Hk; return {pos:new THREE.Vector3(-dist*0.3, up, zc+dist), target:new THREE.Vector3(mobile?2:8, mid, zc-4)};
+}
+document.getElementById('reset').onclick=()=>{ const v=sectionView(); flyTo(v.pos,v.target); };
+const needle=document.getElementById('needle');
+function hud(){ needle.setAttribute('transform',`rotate(${THREE.MathUtils.radToDeg(-controls.getAzimuthalAngle())} 27 27)`);
+  const dist=camera.position.distanceTo(controls.target); const ppk=renderer.domElement.clientHeight/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*dist);
+  const km=[1,2,5,10,20,50].find(k=>k*ppk>60)||50; document.getElementById('sbBar').style.width=Math.round(km*ppk)+'px'; document.getElementById('sbTxt').textContent=km+' km'; }
+const hint=document.getElementById('hint'); function hideHint(){ hint.style.opacity=0; } setTimeout(hideHint, 9000);
+function resize(){ const w=host.clientWidth, h=host.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h;
+  if(SHIFT && w/h>1.25) camera.setViewOffset(w,h,-w*SHIFT,0,w,h); else if(EMBED && w/h<1.1) camera.setViewOffset(w,h,0,h*0.06,w,h); else camera.clearViewOffset();
+  camera.updateProjectionMatrix(); }
+// embed: gentle side-to-side sway around the section view; pauses while the visitor drives
+const sway={on:false, idle:0, t0:0, base:0, amp:0};
+const sph=new THREE.Spherical(), off3=new THREE.Vector3();
+function swayStep(now){
+  if(!EMBED || tween) return;
+  if(!sway.on){ if(sway.idle && now-sway.idle<7000) return; if(!sway.idle && !sway.ready) return;
+    off3.copy(camera.position).sub(controls.target); sph.setFromVector3(off3); sway.base=sph.theta; sway.t0=now; sway.on=true; }
+  const t=(now-sway.t0)/1000, ramp=Math.min(t/4,1);
+  off3.copy(camera.position).sub(controls.target); sph.setFromVector3(off3);
+  sph.theta=sway.base+Math.sin(t*0.22)*0.32*ramp; off3.setFromSpherical(sph); camera.position.copy(controls.target).add(off3); }
+addEventListener('resize',resize); resize();
+
+// intro: start with the whole block, sweep the section in, land facing the cut face
+let bestCut=0.5, bestN=-1; for(let c=0.25;c<=0.75;c+=0.01){ const yk=Hk*(1-c); const n=wells.filter(w=>Math.abs(w.y-yk)<=2).length; if(n>bestN){ bestN=n; bestCut=c; } }
+setSeg('cutSeg','z'); cutPos=0.03; rebuild(); setGround('solid');
+camera.position.set(-W*0.35, 240, Hk*1.6); controls.target.set(0,-6,0);
+const sweep={from:0.03,to:bestCut,s:0,d:2200};
+flyTo(new THREE.Vector3(-W*0.6, 80, Hk*0.95), new THREE.Vector3(0,-6,0), 2.0);
+setTimeout(()=>{ sweep.s=performance.now(); }, 1500);
+setTimeout(()=>{ const v=sectionView(bestCut); flyTo(v.pos, v.target, 2.2); }, 2600);
+
+const clock=new THREE.Clock(); let first=true;
+function frame(now){
+  const dt=Math.min(clock.getDelta(),0.05);
+  if(tween){ const t=Math.min((now-tween.s)/tween.d,1), e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; camera.position.lerpVectors(tween.p0,tween.p1,e); controls.target.lerpVectors(tween.t0,tween.t1,e); if(t>=1) tween=null; }
+  if(sweep.s){ const t=Math.min((now-sweep.s)/sweep.d,1), e=1-Math.pow(1-t,3); cutPos=sweep.from+(sweep.to-sweep.from)*e; buildCut(); if(t>=1){ sweep.s=0; buildWells(); } document.getElementById('cut').value=Math.round(cutPos*100); }
+  swayStep(now); controls.update();
+  waterNormal.offset.x+=dt*0.012; waterNormal.offset.y+=dt*0.007;
+  if(flow.visible) stepFlow(dt);
+  const r=renderer.domElement.getBoundingClientRect();
+  if(labelsEl.style.display!=='none') for(const l of labels){ v3.copy(l.v); const vis=clipPlane.distanceToPoint(v3)>=0; v3.project(camera);
+    if(v3.z>1||!vis){ l.el.style.display='none'; continue; } l.el.style.display=''; l.el.style.transform=`translate(${(v3.x+1)/2*r.width+r.left}px,${(1-v3.y)/2*r.height+r.top}px) translate(-50%,${l.dy})`; }
+  hud(); renderer.render(scene,camera);
+  if(first){ first=false; const ld=document.getElementById('loader'); ld.style.opacity=0; setTimeout(()=>ld.remove(),900);
+    if(EMBED){ try{ parent.postMessage({kai3d:'ready'},'*'); }catch(e){} setTimeout(()=>{ sway.ready=true; }, 5200); } }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__ready=true; window.__kai={showWell, n:wells.length};
+
+</script>
+</body>
+</html>

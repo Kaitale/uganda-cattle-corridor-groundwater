@@ -1,0 +1,19 @@
+# Raw data belong to the Ministry of Water and Environment (MWE), Uganda, and are not redistributed
+data/raw/
+*.nc
+*.tif
+*.xlsx
+*.zip
+# borehole-level tables (contain MWE borehole IDs and locations)
+data/processed/boreholes_located.csv
+data/processed/aswa_layer_picks*.csv
+# interactive pages with well IDs
+figures/interactive/
+# logs and caches
+logs_*.txt
+*.log
+__pycache__/
+.ipynb_checkpoints/
+.cdsapirc
+~$*
+node_modules/

@@ -1,0 +1,27 @@
+name: gwchapter
+channels: [conda-forge]
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - scipy
+  - matplotlib
+  - geopandas
+  - shapely
+  - pyogrio
+  - rasterio
+  - xarray
+  - netcdf4
+  - openpyxl
+  - xlrd
+  - tqdm
+  - requests
+  - jupyterlab
+  - nbformat
+  - pip
+  - pip:
+    - pastas
+    - gempy
+    - gempy_viewer
+    - cdsapi
+    - plotly

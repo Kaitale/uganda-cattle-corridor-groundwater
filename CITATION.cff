@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the chapter and this repository."
+title: "Groundwater intelligence for Uganda's cattle corridor: code, notebooks and derived results"
+version: 1.0.0
+date-released: 2026-10-28
+license: MIT
+repository-code: "https://github.com/Kaitale/uganda-cattle-corridor-groundwater"
+authors:
+  - family-names: Nafula
+    given-names: Monica
+    affiliation: "KAI Water & Energy, Kampala, Uganda"
+  - family-names: Kakooza
+    given-names: Charles
+    affiliation: "Ministry of Water and Environment, Uganda"
+keywords: [groundwater, cattle corridor, drylands, groundwater drought, SGI, Pastas, GemPy, digital twin, ERA5-Land, Uganda]
+preferred-citation:
+  type: generic
+  title: "Groundwater intelligence for Uganda's cattle corridor: integrating monitoring science, open digital technology and drought policy for sustainable dryland water security"
+  authors:
+    - family-names: Nafula
+      given-names: Monica
+    - family-names: Kakooza
+      given-names: Charles
+  year: 2026
+  doi: "10.5281/zenodo.23725130"
+  publisher:
+    name: Zenodo
